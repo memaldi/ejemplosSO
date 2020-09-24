@@ -1,9 +1,6 @@
 from multiprocessing import Process, Value
 import os, signal, time
 
-# Numero de procesos concurrentes
-N_PROCESOS = 2
-
 class Terminator:
     run_forever = True
 

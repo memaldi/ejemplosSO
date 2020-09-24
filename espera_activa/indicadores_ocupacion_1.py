@@ -2,9 +2,6 @@
 from multiprocessing import Process, Value
 import os, signal, time
 
-# Numero de procesos concurrentes
-N_PROCESOS = 2
-
 
 class Terminator:
     run_forever = True
@@ -29,7 +26,7 @@ def P1(i, c1, c2):
         
         # Inicio SC
         print('Proceso {} (PID {}) avanza a su SC'.format(i, os.getpid()))
-        time.sleep(10)
+        time.sleep(5)
         # Fin SC
         print('Proceso {} (PID {}) sale de su SC'.format(i, os.getpid()))
 
@@ -49,7 +46,7 @@ def P2(i, c1, c2):
         
         # Inicio SC
         print('Proceso {} (PID {}) avanza a su SC'.format(i, os.getpid()))
-        time.sleep(10)
+        time.sleep(5)
         # Fin SC
         print('Proceso {} (PID {}) sale de su SC'.format(i, os.getpid()))
 

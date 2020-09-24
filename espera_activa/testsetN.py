@@ -24,7 +24,7 @@ def testset(lock, key):
             return False
 
 
-def procedure(lock, i, key, c, N):
+def procedure(lock, i, key, c):
     terminator = Terminator()
     print('Proceso {} (PID {}) lanzado!'.format(i, os.getpid()))
 
@@ -41,11 +41,11 @@ def procedure(lock, i, key, c, N):
         time.sleep(5)
         # Fin SC
         print('Proceso {} (PID {}) sale de su SC'.format(i, os.getpid()))
-        j = (i + 1) % N.value
+        j = (i + 1) % N_PROCESOS
        
         while (j != i) and (c[j] == 0):
             print('Proceso {} (PID {}), j = {} DENTRO del while'.format(i, os.getpid(), j))
-            j = (j + 1) % N.value
+            j = (j + 1) % N_PROCESOS
         
         print('Proceso {} (PID {}), j = {} FUERA del while'.format(i, os.getpid(), j))
         if j == i:
@@ -56,13 +56,12 @@ def procedure(lock, i, key, c, N):
             c[j] = 0
 
 def main():
-    N = Value('i', N_PROCESOS)
     key = Value('i', 0)
     c = Array('i', N_PROCESOS)
 
     lock = Lock()
     for i in range(N_PROCESOS):
-        Process(target=procedure, args=(lock, i, key, c, N)).start()
+        Process(target=procedure, args=(lock, i, key, c)).start()
 
 if __name__ == "__main__":
     main()
