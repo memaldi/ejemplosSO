@@ -26,7 +26,7 @@ def P1(i, vab):
 
         # Inicio SC
         print('Proceso {} (PID {}) avanza a su SC'.format(i, os.getpid()))
-        time.sleep(10)
+        time.sleep(5)
         # Fin SC
         print('Proceso {} (PID {}) sale de su SC'.format(i, os.getpid()))
         vab.value = 2
@@ -44,7 +44,7 @@ def P2(i, vab):
 
         # Inicio SC
         print('Proceso {} (PID {}) avanza a su SC'.format(i, os.getpid()))
-        time.sleep(10)
+        time.sleep(5)
         # Fin SC
         print('Proceso {} (PID {}) sale de su SC'.format(i, os.getpid()))
         vab.value = 1

@@ -1,10 +1,20 @@
 from multiprocessing import Process, Value, Lock
-import os
+import os, time, signal
 
 # Numero de procesos concurrentes
 N_PROCESOS = 2
 
+class Terminator:
+    run_forever = True
 
+    def __init__(self):
+        signal.signal(signal.SIGTERM, self.handler)
+
+    def handler(self, signum, frame):
+        print('Process {}: Signal catched'.format(os.getpid()))
+        self.run_forever = False
+
+# Simulacion de la instruccion hardware testset
 def testset(lock, key):
     with lock:
         if key.value == 0:
@@ -15,13 +25,18 @@ def testset(lock, key):
 
 
 def procedure(lock, i, key):
-    while True:
+    terminator = Terminator()
+    print('Proceso {} (PID {}) lanzado!'.format(i, os.getpid()))
+
+    while terminator.run_forever:
         # ...
+        print('Proceso {} (PID {}) esperando a entrar en su SC'.format(i, os.getpid()))
         while not testset(lock, key):
             pass
 
         # Inicio SC
         print('Proceso {} (PID {}) avanza a su SC'.format(i, os.getpid()))
+        time.sleep(5)
         # Fin SC
         print('Proceso {} (PID {}) sale de su SC'.format(i, os.getpid()))
 

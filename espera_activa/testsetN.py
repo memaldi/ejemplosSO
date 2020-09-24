@@ -1,8 +1,20 @@
 from multiprocessing import Process, Value, Array, Lock
+import time, os, signal
 
 # Numero de procesos concurrentes
 N_PROCESOS = 5
 
+class Terminator:
+    run_forever = True
+
+    def __init__(self):
+        signal.signal(signal.SIGTERM, self.handler)
+
+    def handler(self, signum, frame):
+        print('Process {}: Signal catched'.format(os.getpid()))
+        self.run_forever = False
+
+# Simulacion de la instruccion hardware testset
 def testset(lock, key):
     with lock:
         if key.value == 0:
@@ -13,30 +25,34 @@ def testset(lock, key):
 
 
 def procedure(lock, i, key, c, N):
-    while True:
+    terminator = Terminator()
+    print('Proceso {} (PID {}) lanzado!'.format(i, os.getpid()))
+
+    while terminator.run_forever:
         # ...
-        print('Proceso {} inicia la secuencia'.format(i))
         c[i] = 1
-        print('Proceso {} esperando a entrar en su SC'.format(i))
+        print('Proceso {} (PID {}) esperando a entrar en su SC'.format(i, os.getpid()))
         while (c[i] != 0) and (not testset(lock, key)):
             pass
         c[i] = 0
         
         # Inicio SC
-        print('Proceso {} avanza a su SC'.format(i))
+        print('Proceso {} (PID {}) avanza a su SC'.format(i, os.getpid()))
+        time.sleep(5)
         # Fin SC
-        print('Proceso {} sale de su SC'.format(i))
+        print('Proceso {} (PID {}) sale de su SC'.format(i, os.getpid()))
         j = (i + 1) % N.value
-        print('Proceso {}, j = {} ANTES del while'.format(i, j))
+       
         while (j != i) and (c[j] == 0):
-            print('Proceso {}, j = {} DENTRO del while'.format(i, j))
+            print('Proceso {} (PID {}), j = {} DENTRO del while'.format(i, os.getpid(), j))
             j = (j + 1) % N.value
-        print('Proceso {}, j = {} FUERA del while'.format(i, j))
+        
+        print('Proceso {} (PID {}), j = {} FUERA del while'.format(i, os.getpid(), j))
         if j == i:
-            print('Proceso {}, j = {} modifica key'.format(i, j))
+            print('Proceso {} (PID {}), j = {} modifica key'.format(i, os.getpid(), j))
             key.value = 0
         else:
-            print('Proceso {}, j = {} asigna c[j] = 0'.format(i, j))
+            print('Proceso {i} (PID {pid}), j = {j} asigna c[{j}] = 0'.format(i=i, pid=os.getpid(), j=j))
             c[j] = 0
 
 def main():
